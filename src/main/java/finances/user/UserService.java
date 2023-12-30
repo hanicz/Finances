@@ -1,5 +1,6 @@
 package finances.user;
 
+import finances.exception.DuplicateException;
 import finances.model.User;
 import finances.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +23,20 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        User user = this.userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException(email);
-        }
-
+        User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), emptyList());
     }
 
-    public User findByUsername(String email) {
-        return this.userRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+        return this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
-    public void signup(User user) {
-        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-        this.userRepository.save(user);
+    public void signup(User signUp) {
+        this.userRepository.findByEmail(signUp.getEmail())
+                .ifPresent(user -> {
+                    throw new DuplicateException(STR. "User with this email '\{ signUp.getEmail() }' already exists" );
+                });
+        signUp.setPassword(this.passwordEncoder.encode(signUp.getPassword()));
+        this.userRepository.save(signUp);
     }
 }

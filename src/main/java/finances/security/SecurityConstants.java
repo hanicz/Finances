@@ -6,4 +6,5 @@ public class SecurityConstants {
     public static final String HEADER_NAME = "Authorization";
     public static final String SIGN_UP_URL = "/user/signup";
     public static final String LOGIN_URL = "/user/login";
+    public static final String H2 = "/h2";
 }
