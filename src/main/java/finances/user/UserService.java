@@ -3,6 +3,7 @@ package finances.user;
 import finances.exception.DuplicateException;
 import finances.model.User;
 import finances.repository.UserRepository;
+import finances.user.dto.SignUpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,12 +32,15 @@ public class UserService implements UserDetailsService {
         return this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
-    public void signup(User signUp) {
-        this.userRepository.findByEmail(signUp.getEmail())
+    public void signup(SignUpRequest signUp) {
+        this.userRepository.findByEmail(signUp.email())
                 .ifPresent(user -> {
-                    throw new DuplicateException(STR. "User with this email '\{ signUp.getEmail() }' already exists" );
+                    throw new DuplicateException(STR. "User with this email '\{ signUp.email() }' already exists" );
                 });
-        signUp.setPassword(this.passwordEncoder.encode(signUp.getPassword()));
-        this.userRepository.save(signUp);
+        User user = User.builder()
+                .email(signUp.email())
+                .password(this.passwordEncoder.encode(signUp.password()))
+                .build();
+        this.userRepository.save(user);
     }
 }

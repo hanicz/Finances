@@ -2,6 +2,8 @@ package finances.user;
 
 import finances.model.User;
 import finances.security.JwtService;
+import finances.user.dto.SignUpRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,14 +21,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody User user) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest) {
         log.trace("Enter signup");
-        userService.signup(user);
+        this.userService.signup(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("hello");
     }
 }
