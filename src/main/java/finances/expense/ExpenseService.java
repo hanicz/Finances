@@ -44,7 +44,7 @@ public class ExpenseService {
 
     @Transactional
     public Expense updateExpense(String userEmail, UpdateExpenseDTO expenseDTO) {
-        Expense expense = this.expenseRepository.findByIdAndUserEmail(expenseDTO.id(), userEmail).orElseThrow(() -> new ItemNotFoundException(STR. "Expense not found with \{ expenseDTO.id() } id" ));
+        Expense expense = this.expenseRepository.findByIdAndUserEmail(expenseDTO.id(), userEmail).orElseThrow(() -> new ItemNotFoundException(String.format("Expense not found with id: %s", expenseDTO.id())));
 
         expense.setExpenseDate(expenseDTO.expenseDate());
         expense.setType(expenseDTO.type());

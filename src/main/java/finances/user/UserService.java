@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
     public void signup(SignUpRequest signUp) {
         this.userRepository.findByEmail(signUp.email())
                 .ifPresent(user -> {
-                    throw new DuplicateException(STR. "User with this email '\{ signUp.email() }' already exists" );
+                    throw new DuplicateException(String.format("User with this email: %s already exists", signUp.email()));
                 });
         User user = User.builder()
                 .email(signUp.email())
